@@ -1,22 +1,34 @@
 import { postgres } from './deps.js'
 
 
-const sql = postgres({
-    host: Deno.env.get("DB_HOST") || 'localhost',
-    port: 5433,
-    user: Deno.env.get("DB_USER") || 'postgres',
-    password: Deno.env.get("DB_PASSWORD") || 'Fallout4',
-    database: Deno.env.get("DB_NAME") || 'fitech'
-});
+// const sql = postgres({
+//     host: Deno.env.get("DB_HOST") || 'dpg-crdcm1l2ng1s73fsi3mg-a.frankfurt-postgres.render.com',
+//     port: 5432,
+//     user: Deno.env.get("DB_USER") || 'fitech_user',
+//     password: Deno.env.get("DB_PASSWORD") || 'rPCA5eBOugT2QbFkL4A6AYT18qhpbWR5',
+//     database: Deno.env.get("DB_NAME") || 'fitech',
+//     ssl: 'require'
+// });
 
-// const sql = postgres({});
+const sql = postgres({});
 
 
 const handleGetTodo = async (request, urlPatternResult) => {
     const id = urlPatternResult.pathname.groups.id;
-    const todos = await sql`SELECT * FROM todos WHERE id = ${id}`;
+    try {
+        const todos = await sql`SELECT * FROM todos WHERE id = ${id}`;
 
-    return Response.json(todos[0]);
+        if (todos.length === 0) {
+            return new Response("Todo not found", { status: 404 });
+        }
+
+        return Response.json(todos[0]);
+    } catch (error) {
+        console.log(error);
+        return new Response("Internal Server Error", { status: 500 });
+    }
+
+
 }
 
 const handleGetTodos = async (request) => {
@@ -36,7 +48,7 @@ const handlePostTodos = async (request) => {
 
         return new Response("Todo added successfully", { status: 200 });
     } catch (error) {
-        console.error(error);
+        console.log(error);
         return new Response("Internal Server Error", { status: 400 });
     }
 }
