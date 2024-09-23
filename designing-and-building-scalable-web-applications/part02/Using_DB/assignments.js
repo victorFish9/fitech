@@ -3,11 +3,6 @@ const portConfig = { port: 7777 };
 import postgres from "https://deno.land/x/postgresjs@v3.4.4/mod.js";
 
 const sql = postgres({
-    host: Deno.env.get("DB_HOST") || 'localhost',
-    port: 5433,
-    user: Deno.env.get("DB_USER") || 'postgres',
-    password: Deno.env.get("DB_PASSWORD") || 'Fallout4',
-    database: Deno.env.get("DB_NAME") || 'fitech'
 });
 
 const handleGetTodos = async (request) => {
